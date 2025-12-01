@@ -3,8 +3,8 @@
 #include "raymath.h"
 #include "../include/PingHitQueue.h"
 
-SoundObject::SoundObject(Vector2 pos, const std::string& soundPath, Color color)
-    : position(pos), baseColor(color), currentColor(color)
+SoundObject::SoundObject(Vector2 pos, const std::string& soundPath, Color color, bool moveable)
+    : position(pos), baseColor(color), currentColor(color), isMoveable(moveable)
 {
     noteSound = LoadSound(soundPath.c_str());
     if (noteSound.frameCount == 0)
@@ -36,12 +36,11 @@ void SoundObject::update(float dt)
         }
     }
 
-    // Countdown armed state
     if (armed)
     {
         confirmTimer -= dt;
         if (confirmTimer <= 0.0f)
-            disarm(); // automatically disarm when time runs out
+            disarm();
     }
 }
 
@@ -74,8 +73,8 @@ void SoundObject::play()
     hitTimer = HIT_DURATION;
     currentColor = WHITE;
 
-    disarm();      // clear armed state immediately
-    lastPingHit = false;
+    disarm();
+    lastPingHit = true;
 }
 
 void SoundObject::draw() const

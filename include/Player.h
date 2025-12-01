@@ -1,12 +1,9 @@
-//
-// Created by hgrov on 10/30/2025.
-//
-
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "raylib.h"
 #include "../include/Tile.h"
-#include<vector>
+#include "../include/SoundObject.h" // NEW: Include SoundObject header
+#include <vector>
 
 class Player {
 public:
@@ -33,9 +30,10 @@ public:
     bool canMoveTo(Vector2 newPos);
     const std::vector<std::vector<Tile>>* tilemap = nullptr;
     void setTilemap(const std::vector<std::vector<Tile>>* map);
+
+    SoundObject* heldObject = nullptr;
 private:
     float inputCooldown;
 };
-
 
 #endif //PLAYER_H

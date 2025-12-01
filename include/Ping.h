@@ -11,7 +11,7 @@ class Ping {
 public:
     // --- Configuration ---
     static constexpr float PING_MAX_RADIUS = 300.0f;
-    static constexpr float PING_SPEED = 350.0f;
+    static constexpr float PING_SPEED = 300.0f;
     static constexpr float PING_THICKNESS = 4.0f;
     static const Color PING_COLOR;
 

@@ -10,7 +10,7 @@ void PingHitQueue::add(SoundObject* obj)
     obj->arm();
 }
 
-// Countdown timer, auto-remove if expired
+// Countdown timer
 void PingHitQueue::update(float dt)
 {
     for (auto it = queue.begin(); it != queue.end(); )

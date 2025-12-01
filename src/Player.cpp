@@ -28,66 +28,64 @@ Player::Player()
 void Player::update(float dt) {
     flapTimer += dt;
 
-    // --- Get flap direction from held keys ---
     Vector2 flapDir = {0, 0};
+
+    // --- WASD movement (keep commented out) ---
+    /*
     if (IsKeyDown(KEY_W)) flapDir.y -= 1.0f;
     if (IsKeyDown(KEY_S)) flapDir.y += 1.0f;
     if (IsKeyDown(KEY_A)) flapDir.x -= 1.0f;
     if (IsKeyDown(KEY_D)) flapDir.x += 1.0f;
+    */
 
-    // Normalize direction
-    if (flapDir.x != 0 || flapDir.y != 0)
-    {
+    // --- Mouse right-click movement ---
+    if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {
+        Vector2 mousePos = GetMousePosition();
+
+        // Direction from player to mouse
+        flapDir.x = mousePos.x - position.x;
+        flapDir.y = mousePos.y - position.y;
+
+        // Normalize
         float len = sqrtf(flapDir.x * flapDir.x + flapDir.y * flapDir.y);
-        flapDir.x /= len;
-        flapDir.y /= len;
+        if (len > 0.0f) {
+            flapDir.x /= len;
+            flapDir.y /= len;
+        }
 
-        if (flapTimer >= 0.2f)
-        {
-            velocity.x += flapDir.x * thrustPower;   // no dt (impulse)
+        if (flapTimer >= 0.2f) {
+            velocity.x += flapDir.x * thrustPower;  // impulse
             velocity.y += flapDir.y * thrustPower;
             flapTimer = 0.0f;
         }
-    }
-    else
-    {
-        // If no key held, allow next press to flap immediately
-        flapTimer = 0.6f;
+    } else {
+        flapTimer = 0.6f; // allow immediate flap when next click happens
     }
 
+    // Apply drag
     velocity.x *= drag;
     velocity.y *= drag;
 
-    Vector2 newPos;
-    // X axis first
-    newPos = { position.x + velocity.x * dt, position.y };
-    if (canMoveTo(newPos)) {
-        position.x = newPos.x;
-    } else {
-        velocity.x = 0;
-    }
-    // Y axis
-    newPos = { position.x, position.y + velocity.y * dt };
-    if (canMoveTo(newPos)) {
-        position.y = newPos.y;
-    } else {
-        velocity.y = 0;
-    }
+    // Move with collision
+    Vector2 newPos = { position.x + velocity.x * dt, position.y };
+    if (canMoveTo(newPos)) position.x = newPos.x;
+    else velocity.x = 0;
 
-    // auto-rotate to movement direction
-    if (velocity.x != 0 || velocity.y != 0)
-    {
+    newPos = { position.x, position.y + velocity.y * dt };
+    if (canMoveTo(newPos)) position.y = newPos.y;
+    else velocity.y = 0;
+
+    // Auto-rotate toward movement direction
+    if (velocity.x != 0 || velocity.y != 0) {
         angle = atan2(velocity.y, velocity.x);
     }
 
     // Animation
     frameTimer += dt;
-    if (frameTimer >= frameSpeed)
-    {
+    if (frameTimer >= frameSpeed) {
         frameTimer = 0.0f;
         currentFrame++;
-        if (currentFrame > 1)
-            currentFrame = 0;
+        if (currentFrame > 1) currentFrame = 0;
     }
 }
 
